@@ -77,11 +77,11 @@ class RefinePose():
         return total_loss/2
     
     def totalLoss_trans(self,trans,cadModelPoints,detectedEdges):
-        trans_body = np.identity(4)
-        trans_body[:3,3] = trans
+        transformation_matrix_body = np.identity(4)
+        transformation_matrix_body[:3,3] = trans
         
         transformation_matrix_orig = self.transformation_matrix.copy()
-        self.transformation_matrix = trans_body @ self.transformation_matrix
+        self.transformation_matrix = transformation_matrix_body @ self.transformation_matrix
         loss = self.getLoss(cadModelPoints,detectedEdges)
         self.transformation_matrix = transformation_matrix_orig.copy()
         
@@ -93,11 +93,11 @@ class RefinePose():
 
     def totalLoss_rot(self,euler,cadModelPoints,detectedEdges):
         r = Rotation.from_euler('XYZ',euler)
-        trans_body = np.identity(4)
-        trans_body[:3,:3] = r.as_matrix()
+        transformation_matrix_body = np.identity(4)
+        transformation_matrix_body[:3,:3] = r.as_matrix()
         
         transformation_matrix_orig = self.transformation_matrix.copy()
-        self.transformation_matrix = self.transformation_matrix @ trans_body
+        self.transformation_matrix = self.transformation_matrix @ transformation_matrix_body
         loss = self.getLoss(cadModelPoints,detectedEdges)
         self.transformation_matrix = transformation_matrix_orig.copy()
         
@@ -123,10 +123,10 @@ class RefinePose():
                 finalPose = minimize(self.totalLoss_trans_iter,val,args = (i,trans,cadModelPoints,detectedEdges),method='Nelder-Mead')
                 trans[i]  = finalPose.x
                 
-            trans_body = np.identity(4)
-            trans_body[:3,3] = trans
+            transformation_matrix_body = np.identity(4)
+            transformation_matrix_body[:3,3] = trans
     
-            self.transformation_matrix = trans_body @ transformation_matrix_orig
+            self.transformation_matrix = transformation_matrix_body @ transformation_matrix_orig
             transformation_matrix_orig = self.transformation_matrix.copy()
             for i,val in enumerate(euler):
                 bounds = (-3.14/10,3.14/10)
@@ -135,9 +135,9 @@ class RefinePose():
                 euler[i]  = finalPose.x
                 
             r = Rotation.from_euler('XYZ',euler)
-            trans_body = np.identity(4)
-            trans_body[:3,:3] = r.as_matrix()
-            self.transformation_matrix = transformation_matrix_orig @ trans_body
+            transformation_matrix_body = np.identity(4)
+            transformation_matrix_body[:3,:3] = r.as_matrix()
+            self.transformation_matrix = transformation_matrix_orig @ transformation_matrix_body
         
             loss = self.getLoss(cadModelPoints,detectedEdges)
             print(loss)
