@@ -54,17 +54,6 @@ def find_edges_canny(gradient_img, num_lines=10, line_thickness = 20, normalizat
     #line_num = 0
     lines_params = []
     for line_num in range(num_lines):
-#        print(line_num)
-#        hough_space, max_distance, time_taken = get_normalized_hough_space(canny_,rho_resolution,  angle_resolution)
-#        if normalization:
-#            semi_gaussian_filter = np.array(((0,0,7,0,0),(0,0,26,0,0),(0,5,41,5,0),(0,0,26,0,0),(0,0,7,0,0)))
-#            semi_gaussian_filter = semi_gaussian_filter/(np.sum(semi_gaussian_filter))
-#            hough_space = signal.convolve2d(hough_space,semi_gaussian_filter, mode = 'same')
-#        
-#        most_voted_line = np.argmax(hough_space)
-#        x = int(np.floor(most_voted_line/hough_space.shape[1]))
-#        y = most_voted_line - x*hough_space.shape[1]
-#        rho,theta = (x*rho_resolution - max_distance),np.deg2rad(y*angle_resolution -90)
         hough_lines = cv2.HoughLines(canny_,rho_resolution,angle_resolution*np.pi/180,1)
         print(len(hough_lines))
         most_voted_lines = hough_lines[0][0]
